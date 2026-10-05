@@ -113,9 +113,6 @@ footer a { color: inherit; text-decoration: none; }
 .cv-project p { margin-top: 6px; }
 .error { min-height: 55vh; padding-top: 80px; }
 .error p { margin-top: 20px; }
-.credits { max-width: 760px; padding-top: 35px; }
-.credits h2 { margin: 28px 0 14px; }
-.credits p { font-size: 15px; }
 @media (min-width: 1300px) { .shell { max-width: 1014px; padding: 0 40px; } .work { grid-template-columns: 232px minmax(0, 1fr); gap: 38px; } .cafe-image { width: 232px; height: 232px; } }
 @media (max-width: 680px) {
   .shell { padding: 0 22px; }
