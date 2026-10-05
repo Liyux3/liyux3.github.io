@@ -41,6 +41,7 @@ strong { font-weight: 600; }
 .portrait { width: 174px; height: 205px; object-fit: cover; border-radius: 4px; }
 .contact-links { display: flex; flex-wrap: wrap; align-items: center; gap: 22px; margin-top: 23px; font-size: 15px; }
 .contact-links a { text-decoration: none; }
+.unavailable { color: #929892; cursor: default; }
 .opportunity { font-size: 14px; color: var(--muted); margin-top: 24px; }
 .section-heading { display: flex; gap: 20px; align-items: baseline; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
 .section-heading .note { margin-left: auto; font-size: 12px; color: var(--muted); }
