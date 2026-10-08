@@ -49,6 +49,10 @@
     if (/^https?:$/.test(source.protocol) && source.hostname !== location.hostname) referrer = `${source.protocol}//${source.hostname}/`;
   } catch { /* Empty or non-web referrers are intentionally omitted. */ }
 
+  const dimensions = (width, height) => Number.isFinite(width) && Number.isFinite(height) && width > 0 && height > 0 && width <= 32768 && height <= 32768 ? `${Math.round(width)}x${Math.round(height)}` : undefined;
+  let timezone;
+  try { timezone = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch { /* Optional browser metadata. */ }
+
   // Send only a fixed public path and named events, never URL queries, form data or identifiers.
   window.yuxianAnalyticsBeforeSend = (type, payload) => {
     if (type !== 'event' || optedOut() || document.visibilityState !== 'visible') return false;
@@ -58,9 +62,19 @@
       hostname: settings.hostname,
       url: ['/', '/privacy/', '/cv/'].includes(location.pathname) ? location.pathname : '/404',
       title: document.title,
-      language: (navigator.language || '').split('-')[0],
+      language: navigator.language || '',
       referrer
     };
+    const screen = dimensions(window.screen?.width, window.screen?.height);
+    if (screen) clean.screen = screen;
+    // Environment properties are attached to the pageview only, avoiding per-click duplication.
+    if (!payload.name) {
+      const data = {};
+      const viewport = dimensions(window.innerWidth, window.innerHeight);
+      if (viewport) data.viewport = viewport;
+      if (timezone && /^[A-Za-z0-9_+/-]{1,64}$/.test(timezone)) data.timezone = timezone;
+      if (Object.keys(data).length) clean.data = data;
+    }
     if (payload.name) clean.name = payload.name;
     return clean;
   };
