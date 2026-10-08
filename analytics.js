@@ -53,14 +53,30 @@
   let timezone;
   try { timezone = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch { /* Optional browser metadata. */ }
 
-  // Send only a fixed public path and named events, never URL queries, form data or identifiers.
+  // Cohort-level campaign labels only; arbitrary query values may contain personal data or tokens.
+  const campaigns = {
+    utm_source: ['email', 'github', 'linkedin', 'google', 'bing', 'scholar', 'conference'],
+    utm_medium: ['email', 'outreach', 'referral', 'social', 'search', 'qr'],
+    utm_campaign: ['fall-2027', 'phd-2027', 'research', 'portfolio']
+  };
+  const incoming = new URLSearchParams(location.search);
+  const approved = new URLSearchParams();
+  for (const [key, values] of Object.entries(campaigns)) {
+    const candidates = incoming.getAll(key);
+    if (candidates.length !== 1) continue;
+    const value = candidates[0].trim().toLowerCase();
+    if (values.includes(value)) approved.set(key, value);
+  }
+  const campaignQuery = approved.size ? `?${approved.toString()}` : '';
+
+  // Send a fixed public path, approved campaigns and named events, never arbitrary query values.
   window.yuxianAnalyticsBeforeSend = (type, payload) => {
     if (type !== 'event' || optedOut() || document.visibilityState !== 'visible') return false;
     if (payload.name && !allowedEvents.has(payload.name)) return false;
     const clean = {
       website: settings.websiteId,
       hostname: settings.hostname,
-      url: ['/', '/privacy/', '/cv/'].includes(location.pathname) ? location.pathname : '/404',
+      url: (['/', '/privacy/', '/cv/'].includes(location.pathname) ? location.pathname : '/404') + campaignQuery,
       title: document.title,
       language: navigator.language || '',
       referrer
