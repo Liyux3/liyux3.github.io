@@ -12,7 +12,8 @@ function applyTheme() {
   themeButton.dataset.mode = isDark ? 'dark' : 'light';
   themeButton.setAttribute('aria-label', label);
   themeButton.title = label;
-  for (const meta of document.querySelectorAll('meta[name="theme-color"]')) meta.content = isDark ? '#171719' : '#ffffff';
+  const background = getComputedStyle(document.documentElement).getPropertyValue('--paper').trim();
+  for (const meta of document.querySelectorAll('meta[name="theme-color"]')) meta.content = background;
 }
 themeButton?.addEventListener('click', () => {
   themeMode = isDarkTheme() ? 'light' : 'dark';
